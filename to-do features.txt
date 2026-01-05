@@ -1,0 +1,4 @@
+- to-do-list app
+- state management (local)
+- archive (james)
+- themes (james)
