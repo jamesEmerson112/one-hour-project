@@ -3,7 +3,7 @@
 	import Archive from '$lib/components/Archive.svelte';
 </script>
 
-<main class="grid h-screen grid-cols-2 gap-4 p-4">
+<main class="grid h-full grid-cols-2 gap-2">
 	<Todo />
 	<Archive />
 </main>
