@@ -132,6 +132,16 @@ export const taskStore = {
         saveTasks(tasks);
     },
 
+    // Update a task's description
+    updateTask(id: string, description: string): void {
+        tasks = tasks.map(task =>
+            task.id === id
+                ? { ...task, description: description.trim() }
+                : task
+        );
+        saveTasks(tasks);
+    },
+
     // Delete a task
     deleteTask(id: string): void {
         tasks = tasks.filter(task => task.id !== id);
