@@ -1,6 +1,35 @@
 <script lang="ts">
 	import type { Task } from '$lib/tasks_state.svelte';
+	import { taskStore } from '$lib/tasks_state.svelte';
 	import { themeStore } from '$lib/theme_state.svelte';
+	import { glassStore } from '$lib/glass_state.svelte';
+	import AsciiGlass from './AsciiGlass.svelte';
+	import { onMount, onDestroy } from 'svelte';
+
+	// Subscribe to archive/unarchive events for glass animation
+	let unsubscribeArchive: (() => void) | null = null;
+	let unsubscribeUnarchive: (() => void) | null = null;
+
+	onMount(() => {
+		// Initialize glass with demo tasks + any real archived tasks (no animation)
+		const totalArchived = demoTasks.length + taskStore.archivedTasks.length;
+		glassStore.setInitialCount(totalArchived);
+
+		// Subscribe to future archive events
+		unsubscribeArchive = taskStore.onArchive(() => {
+			glassStore.addGrain();
+		});
+
+		// Subscribe to unarchive events
+		unsubscribeUnarchive = taskStore.onUnarchive(() => {
+			glassStore.removeGrain();
+		});
+	});
+
+	onDestroy(() => {
+		unsubscribeArchive?.();
+		unsubscribeUnarchive?.();
+	});
 
 	// Demo data - hardcoded completed tasks for development
 	const demoTasks: Task[] = [
@@ -28,7 +57,10 @@
 	</h2>
 
 	{#if themeStore.isTerminal}
-		<!-- Terminal Mode: ASCII style -->
+		<!-- ASCII Glass Visualization - Terminal Mode Only -->
+		<AsciiGlass />
+
+		<!-- Terminal Mode: ASCII style task list -->
 		<pre class="text-sm">{'·'.repeat(36)}
 {#each sortedTasks as task}: {task.description.padEnd(33)}:
 {/each}{'·'.repeat(36)}</pre>

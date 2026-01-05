@@ -50,6 +50,11 @@ function saveTasks(tasks: Task[]): void {
 // Tasks state using Svelte 5 runes
 let tasks = $state<Task[]>(loadTasks());
 
+// Archive event callbacks for glass animation
+type ArchiveCallback = (taskId: string) => void;
+let archiveCallbacks: ArchiveCallback[] = [];
+let unarchiveCallbacks: ArchiveCallback[] = [];
+
 // Listen for localStorage changes from other tabs/windows
 if (typeof window !== 'undefined') {
     window.addEventListener('storage', (event) => {
@@ -120,6 +125,8 @@ export const taskStore = {
                 : task
         );
         saveTasks(tasks);
+        // Notify subscribers (for glass animation)
+        archiveCallbacks.forEach(cb => cb(id));
     },
 
     // Unarchive a task
@@ -130,6 +137,8 @@ export const taskStore = {
                 : task
         );
         saveTasks(tasks);
+        // Notify subscribers (for glass animation)
+        unarchiveCallbacks.forEach(cb => cb(id));
     },
 
     // Update a task's description
@@ -166,5 +175,23 @@ export const taskStore = {
     // Get active tasks (not archived)
     get activeTasks(): Task[] {
         return tasks.filter(task => task.archivedAt === null);
+    },
+
+    // Subscribe to archive events (for glass animation)
+    onArchive(callback: ArchiveCallback): () => void {
+        archiveCallbacks.push(callback);
+        // Return unsubscribe function
+        return () => {
+            archiveCallbacks = archiveCallbacks.filter(cb => cb !== callback);
+        };
+    },
+
+    // Subscribe to unarchive events (for glass animation)
+    onUnarchive(callback: ArchiveCallback): () => void {
+        unarchiveCallbacks.push(callback);
+        // Return unsubscribe function
+        return () => {
+            unarchiveCallbacks = unarchiveCallbacks.filter(cb => cb !== callback);
+        };
     }
 };
