@@ -3,6 +3,7 @@ export interface Task {
     description: string;
     createdAt: number; // UTC seconds
     completedAt: number | null; // UTC seconds or null for unfinished
+    archivedAt: number | null; // UTC seconds or null for not archived
 }
 
 const STORAGE_KEY = 'tasks';
@@ -26,7 +27,8 @@ function loadTasks(): Task[] {
             task.id &&
             typeof task.description === 'string' &&
             typeof task.createdAt === 'number' &&
-            (task.completedAt === null || typeof task.completedAt === 'number')
+            (task.completedAt === null || typeof task.completedAt === 'number') &&
+            (task.archivedAt === null || typeof task.archivedAt === 'number')
         );
     } catch (error) {
         console.error('Error loading tasks from LocalStorage:', error);
@@ -59,7 +61,8 @@ if (typeof window !== 'undefined') {
                     task.id &&
                     typeof task.description === 'string' &&
                     typeof task.createdAt === 'number' &&
-                    (task.completedAt === null || typeof task.completedAt === 'number')
+                    (task.completedAt === null || typeof task.completedAt === 'number') &&
+                    (task.archivedAt === null || typeof task.archivedAt === 'number')
                 );
                 tasks = validTasks;
             } catch (error) {
@@ -81,7 +84,8 @@ export const taskStore = {
             id: crypto.randomUUID(),
             description: description.trim(),
             createdAt: getUtcSeconds(),
-            completedAt: null
+            completedAt: null,
+            archivedAt: null
         };
 
         tasks = [...tasks, newTask];
@@ -108,6 +112,26 @@ export const taskStore = {
         saveTasks(tasks);
     },
 
+    // Archive a task
+    archiveTask(id: string): void {
+        tasks = tasks.map(task =>
+            task.id === id
+                ? { ...task, archivedAt: getUtcSeconds() }
+                : task
+        );
+        saveTasks(tasks);
+    },
+
+    // Unarchive a task
+    unarchiveTask(id: string): void {
+        tasks = tasks.map(task =>
+            task.id === id
+                ? { ...task, archivedAt: null }
+                : task
+        );
+        saveTasks(tasks);
+    },
+
     // Delete a task
     deleteTask(id: string): void {
         tasks = tasks.filter(task => task.id !== id);
@@ -122,5 +146,15 @@ export const taskStore = {
     // Get incomplete tasks
     get incompleteTasks(): Task[] {
         return tasks.filter(task => task.completedAt === null);
+    },
+
+    // Get archived tasks
+    get archivedTasks(): Task[] {
+        return tasks.filter(task => task.archivedAt !== null);
+    },
+
+    // Get active tasks (not archived)
+    get activeTasks(): Task[] {
+        return tasks.filter(task => task.archivedAt === null);
     }
 };
