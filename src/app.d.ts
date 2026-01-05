@@ -9,10 +9,7 @@ declare global {
 			cf?: IncomingRequestCfProperties;
 		}
 
-		interface Locals {
-			user: import('$lib/server/auth').SessionValidationResult['user'];
-			session: import('$lib/server/auth').SessionValidationResult['session'];
-		}
+		interface Locals { }
 
 		// interface Error {}
 		// interface Locals {}
@@ -22,4 +19,4 @@ declare global {
 	}
 }
 
-export {};
+export { };
