@@ -39,9 +39,9 @@
 			<!-- Existing Tasks -->
 			{#each taskStore.tasks as task (task.id)}
 				<div
-					class="group flex items-center gap-4 rounded-xl {task.completedAt
+					class="group flex items-center gap-2 rounded-xl {task.completedAt
 						? 'border-green-100 bg-green-50'
-						: 'border-gray-100 bg-white'} border p-4 shadow-sm transition-all hover:border-gray-200 hover:shadow-md"
+						: 'border-gray-100 bg-white'} border px-4 pt-1 pb-2 shadow-sm transition-all hover:border-gray-200 hover:shadow-md"
 				>
 					<!-- Checkbox -->
 					<button
@@ -80,12 +80,12 @@
 									(e.target as HTMLInputElement).blur();
 								}
 							}}
-							class="w-full bg-transparent px-0 py-1 font-medium wrap-break-word {task.completedAt
+							class="w-full rounded-lg bg-transparent px-2 py-1 font-medium wrap-break-word {task.completedAt
 								? 'text-gray-600 line-through'
-								: 'text-gray-800'} border-0 outline-none focus:rounded-lg focus:border-2 focus:border-blue-400 focus:bg-white focus:px-3 focus:py-1 focus:ring-2 focus:ring-blue-400/20"
+								: 'text-gray-800'} border-0 outline-none focus:bg-blue-50/50 focus:ring-2 focus:ring-blue-400/30"
 							placeholder="Task description..."
 						/>
-						<p class="mt-1 text-xs text-gray-500">
+						<p class="mt-1 px-2 text-xs text-gray-500">
 							{#if task.completedAt}
 								Completed {new Date(task.completedAt * 1000).toLocaleDateString()}
 							{:else}
@@ -116,7 +116,7 @@
 
 			<!-- Add New Task (Always Visible) -->
 			<div
-				class="flex items-center gap-4 rounded-xl border-2 border-dashed border-gray-300 bg-gray-50/50 p-4 transition-all hover:border-blue-400 hover:bg-blue-50/50"
+				class="flex items-center gap-2 rounded-xl border-2 border-dashed border-gray-300 bg-gray-50/50 p-4 transition-all hover:border-blue-400 hover:bg-blue-50/50"
 			>
 				<!-- Placeholder Checkbox -->
 				<div
@@ -132,7 +132,7 @@
 						bind:value={newTaskDescription}
 						onkeydown={handleKeydown}
 						placeholder="Add a new task..."
-						class="w-full border-0 bg-transparent px-0 py-1 text-gray-600 placeholder-gray-400 outline-none focus:rounded-lg focus:border-2 focus:border-blue-400 focus:bg-white focus:px-3 focus:py-1 focus:text-gray-800 focus:ring-2 focus:ring-blue-400/20"
+						class="w-full rounded-lg border-0 bg-transparent px-2 py-1 text-gray-600 placeholder-gray-400 outline-none focus:bg-blue-50/50 focus:text-gray-800 focus:ring-2 focus:ring-blue-400/30"
 					/>
 				</div>
 
